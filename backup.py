@@ -7,7 +7,7 @@ import filecmp
 
 # CONFIGURACIÓN
 CARPETA_ORIGEN = Path(__file__).parent  # ProyectosDAM
-CARPETA_DESTINO_NAS = Path(r'C:\BackupsDAM')  # <-- CAMBIA ESTA RUTA si usas otra
+CARPETA_DESTINO_NAS = Path(r'C:\Users\usuario\Desktop\BackupsDAM')  # <-- CAMBIA ESTA RUTA si usas otra
 COMMIT_MENSAJE = f"Backup automático {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
 
 # FUNCIÓN: Backup a GitHub
