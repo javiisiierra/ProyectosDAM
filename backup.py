@@ -1,33 +1,26 @@
-import os
 import subprocess
-from pathlib import Path
 from datetime import datetime
+import os
 
-# 👇 Cambia esta ruta si tu carpeta no está en el escritorio
-CARPETA_PROYECTOS = Path(r"C:\Users\usuario\Desktop\ProyectosDAM")
+# Obtener ruta actual (ProyectosDAM)
+ruta_repo = os.getcwd()
 
-def log(mensaje):
-    hora = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    print(f"[{hora}] {mensaje}")
+print(f"[{datetime.now()}] Iniciando copia de seguridad a GitHub en: {ruta_repo}")
 
-def backup_github():
-    log("Iniciando copia de seguridad a GitHub...")
-    for proyecto in CARPETA_PROYECTOS.iterdir():
-        if proyecto.is_dir() and (proyecto / ".git").exists():
-            log(f"Procesando: {proyecto.name}")
-            try:
-                subprocess.run(["git", "-C", str(proyecto), "add", "."], check=True)
-                subprocess.run([
-                    "git", "-C", str(proyecto), "commit",
-                    "-m", f"Backup automático {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-                ], check=True)
-                subprocess.run(["git", "-C", str(proyecto), "push"], check=True)
-                log(f"{proyecto.name} subido a GitHub con éxito.")
-            except subprocess.CalledProcessError:
-                log(f"No hay cambios o hubo un error en {proyecto.name}")
-        else:
-            log(f"{proyecto.name} no es un repositorio Git. Ignorado.")
-    log("Copia de seguridad a GitHub finalizada.")
+try:
+    subprocess.run(["git", "add", "."], check=True)
 
-if __name__ == "__main__":
-    backup_github()
+    mensaje = f"Backup automático - {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+    result = subprocess.run(["git", "commit", "-m", mensaje], capture_output=True, text=True)
+
+    if "nothing to commit" in result.stdout:
+        print(f"[{datetime.now()}] No hay cambios nuevos para hacer commit.")
+    else:
+        print(f"[{datetime.now()}] Commit realizado correctamente.")
+
+        subprocess.run(["git", "push"], check=True)
+        print(f"[{datetime.now()}] Push a GitHub realizado con éxito.")
+
+except subprocess.CalledProcessError as e:
+    print(f"[{datetime.now()}] Error al ejecutar git: {e}")
+
